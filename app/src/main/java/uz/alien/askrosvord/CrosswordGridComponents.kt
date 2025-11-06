@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -34,9 +32,8 @@ fun CrosswordGrid(
     onCellClick: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Dinamik o'lcham hisoblash - faqat harf kataklar uchun
     val cellSize = remember(puzzle.cols) {
-        val effectiveCols = (puzzle.cols + 1) / 2 // Juft indexdagi kataklar
+        val effectiveCols = (puzzle.cols + 1) / 2
         (300f / effectiveCols.coerceAtLeast(1)).coerceIn(20f, 40f).dp
     }
 
@@ -52,7 +49,6 @@ fun CrosswordGrid(
             val isOddRow = rowIndex % 2 == 1
 
             if (isOddRow) {
-                // Toq qatorlar - faqat gorizontal devorlar
                 Row(
                     modifier = Modifier.height(wallThickness),
                     horizontalArrangement = Arrangement.Center
@@ -61,7 +57,6 @@ fun CrosswordGrid(
                         val isOddCol = colIndex % 2 == 1
 
                         if (isOddCol) {
-                            // Vertikal devor joyi
                             Box(
                                 modifier = Modifier
                                     .width(wallThickness)
@@ -69,7 +64,6 @@ fun CrosswordGrid(
                                     .background(if (cell.char == '|') Color.Black else Color.White)
                             )
                         } else {
-                            // Gorizontal devor
                             Box(
                                 modifier = Modifier
                                     .width(cellSize)
@@ -80,7 +74,6 @@ fun CrosswordGrid(
                     }
                 }
             } else {
-                // Juft qatorlar - harflar va vertikal devorlar
                 Row(
                     modifier = Modifier.height(cellSize),
                     horizontalArrangement = Arrangement.Center
@@ -89,7 +82,6 @@ fun CrosswordGrid(
                         val isOddCol = colIndex % 2 == 1
 
                         if (isOddCol) {
-                            // Vertikal devor
                             Box(
                                 modifier = Modifier
                                     .width(wallThickness)
@@ -97,7 +89,6 @@ fun CrosswordGrid(
                                     .background(if (cell.char == '|') Color.Black else Color.White)
                             )
                         } else {
-                            // Harf katagi
                             CrosswordCell(
                                 cell = cell,
                                 cellState = cellStates[Pair(rowIndex, colIndex)],
@@ -157,7 +148,6 @@ fun CrosswordCell(
 private fun isInWord(row: Int, col: Int, word: CrosswordWord?): Boolean {
     if (word == null) return false
 
-    // Faqat juft indexdagi kataklar harf saqlaydi
     if (row % 2 == 1 || col % 2 == 1) return false
 
     return if (word.isHorizontal) {
@@ -179,13 +169,13 @@ fun WordNumberIndicator(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         puzzle.grid.forEachIndexed { rowIndex, row ->
-            if (rowIndex % 2 == 0) { // Faqat juft qatorlar
+            if (rowIndex % 2 == 0) {
                 Row(
                     modifier = Modifier.height(cellSize),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     row.forEachIndexed { colIndex, cell ->
-                        if (colIndex % 2 == 0) { // Faqat juft ustunlar
+                        if (colIndex % 2 == 0) {
                             Box(
                                 modifier = Modifier
                                     .size(cellSize)

@@ -23,9 +23,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Backspace
-import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.KeyboardHide
 import androidx.compose.material.icons.filled.Lightbulb
@@ -34,7 +31,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,15 +38,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -197,12 +190,10 @@ fun VirtualKeyboard(
     val rowSpacing = 4.dp
     val availableWidth = screenWidth - horizontalPadding * 2
 
-    // Birinchi qator tugma kengligi — asosiy me’yor
     val firstRowButtonCount = latinKeys[0].size
     val firstRowTotalSpacing = rowSpacing * (firstRowButtonCount - 1)
     val firstRowButtonWidth = (availableWidth - firstRowTotalSpacing) / firstRowButtonCount
 
-    // Animatsiya: faqat klaviatura tugmalari qismi
     val keyboardContentHeight = 172.dp
     val animatedContentHeight by animateDpAsState(
         targetValue = if (isVisible) keyboardContentHeight else 0.dp,
@@ -217,7 +208,6 @@ fun VirtualKeyboard(
             .padding(horizontal = horizontalPadding, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(rowSpacing)
     ) {
-        // Klaviatura tugmalari (animatsiyali)
         if (animatedContentHeight > 0.dp) {
             Column(
                 modifier = Modifier
@@ -242,7 +232,6 @@ fun VirtualKeyboard(
                         row.forEach { char ->
                             when (char) {
                                 Char(0) -> {
-                                    // Backspace tugmasi
                                     Button(
                                         onClick = onDelete,
                                         modifier = Modifier
@@ -261,7 +250,6 @@ fun VirtualKeyboard(
                                     }
                                 }
                                 Char(1) -> {
-                                    // Ko‘rinmas joy egallovchi (layout uchun)
                                     Button(
                                         onClick = { },
                                         modifier = Modifier
@@ -285,7 +273,6 @@ fun VirtualKeyboard(
             }
         }
 
-        // Doimiy ko‘rinadigan toggle tugmasi
         val toggleText = if (isVisible) "Yashirish" else "Ko‘rsatish"
         val toggleIcon = if (isVisible) Icons.Default.KeyboardHide else Icons.Default.Keyboard
 
@@ -364,7 +351,6 @@ fun ControlPanel(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Progress
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -394,7 +380,6 @@ fun ControlPanel(
 
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
 
-            // Controls
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)

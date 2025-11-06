@@ -1,6 +1,6 @@
 package uz.alien.askrosvord
 
-// Data Models
+
 data class CrosswordCell(
     val row: Int,
     val col: Int,
@@ -30,7 +30,6 @@ data class CellState(
     val isCorrect: Boolean? = null
 )
 
-// Parser
 object CrosswordParser {
 
     fun parseConsoleOutput(output: String): CrosswordPuzzle? {
@@ -74,24 +73,19 @@ object CrosswordParser {
 
                 when {
                     char == '|' -> {
-                        // Devor (toq qator/ustunda) yoki bo'yalgan katak
                         row.add(CrosswordCell(rowIndex, colIndex, '|', isWall = true))
                     }
                     char == ' ' -> {
                         if (isOddRow || isOddCol) {
-                            // Toq qator/ustunda bo'sh joy - devor yo'q
                             row.add(CrosswordCell(rowIndex, colIndex, ' ', isWall = false))
                         } else {
-                            // Juft qator/ustunda bo'sh joy - bo'sh katak
                             row.add(CrosswordCell(rowIndex, colIndex, ' ', isWall = false))
                         }
                     }
                     else -> {
-                        // Harf (faqat juft qator va ustunlarda)
                         if (!isOddRow && !isOddCol) {
                             row.add(CrosswordCell(rowIndex, colIndex, char, isWall = false))
                         } else {
-                            // Noto'g'ri format
                             row.add(CrosswordCell(rowIndex, colIndex, ' ', isWall = false))
                         }
                     }
@@ -138,7 +132,7 @@ object CrosswordParser {
                     val hint = numberMatch.groupValues[2].trim()
                     val length = numberMatch.groupValues[3].toIntOrNull() ?: continue
 
-                    val coordMatch = Regex("\\[(\\d+),(\\d+)\\]").find(coordPart)
+                    val coordMatch = Regex("\\[(\\d+),(\\d+)]").find(coordPart)
                     if (coordMatch == null) continue
 
                     val row = coordMatch.groupValues[1].toIntOrNull() ?: continue
@@ -154,7 +148,7 @@ object CrosswordParser {
                             number = number
                         )
                     )
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     continue
                 }
             }
@@ -186,7 +180,6 @@ object CrosswordParser {
         val word = StringBuilder()
 
         for (i in 0 until length) {
-            // Juft indexlarda harflar joylashgan, har 2 qadam
             val row = if (isHorizontal) startRow else startRow + (i * 2)
             val col = if (isHorizontal) startCol + (i * 2) else startCol
 

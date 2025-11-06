@@ -45,28 +45,17 @@ fun CrosswordScreen(
     val uiState by viewModel.uiState.collectAsState()
     val cellStates = viewModel.cellStates
 
-    // Puzzle ni initialize qilish
     LaunchedEffect(consoleOutput) {
         viewModel.initializePuzzle(consoleOutput)
     }
 
-    // Completion dialog
     if (uiState.isCompleted) {
         CompletionDialog(
             onDismiss = { viewModel.resetPuzzle() }
         )
     }
 
-    Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = { Text("Krossvord") },
-//                colors = TopAppBarDefaults.topAppBarColors(
-//                    containerColor = MaterialTheme.colorScheme.primaryContainer
-//                )
-//            )
-//        }
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -74,7 +63,6 @@ fun CrosswordScreen(
         ) {
             when {
                 uiState.isLoading -> {
-                    // Loading state
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -89,7 +77,6 @@ fun CrosswordScreen(
                     }
                 }
                 uiState.error != null -> {
-                    // Error state
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -112,19 +99,16 @@ fun CrosswordScreen(
                     }
                 }
                 uiState.puzzle != null -> {
-                    // Main content
                     val puzzle = uiState.puzzle!!
 
                     Column(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        // Scrollable content qismi
                         Column(
                             modifier = Modifier
                                 .weight(1f)
                                 .verticalScroll(rememberScrollState())
                         ) {
-                            // Control Panel
                             ControlPanel(
                                 isHorizontalMode = uiState.isHorizontalMode,
                                 showHints = uiState.showHints,
@@ -135,7 +119,6 @@ fun CrosswordScreen(
                                 onReset = { viewModel.resetPuzzle() }
                             )
 
-                            // Crossword Grid
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -153,12 +136,11 @@ fun CrosswordScreen(
                                 )
                             }
 
-                            // Hints Panel
                             if (uiState.showHints) {
                                 HintsPanel(
                                     words = puzzle.words,
                                     selectedWord = uiState.selectedWord,
-                                    showHints = uiState.showHints,
+                                    showHints = true,
                                     onWordClick = { word ->
                                         viewModel.selectCell(word.startRow, word.startCol)
                                     },
@@ -171,7 +153,6 @@ fun CrosswordScreen(
 
                         var isKeyboardVisible by remember { mutableStateOf(true) }
 
-                        // Virtual Keyboard (pastda fixed)
                         VirtualKeyboard(
                             onKeyPress = { char ->
                                 viewModel.inputChar(char)
@@ -217,7 +198,6 @@ fun CompletionDialog(
     )
 }
 
-// MainActivity.kt ga qo'shish uchun
 @Composable
 fun CrosswordApp(consoleOutput: String) {
     MaterialTheme {

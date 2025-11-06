@@ -66,7 +66,6 @@ class CrosswordViewModel : ViewModel() {
     }
 
     private fun countNonWallCells(puzzle: CrosswordPuzzle): Int {
-        // Faqat juft qator va ustundagi harflarni sanash
         return puzzle.grid.sumOf { row ->
             row.count { !it.isWall && it.char != ' ' && it.row % 2 == 0 && it.col % 2 == 0 }
         }
@@ -75,7 +74,6 @@ class CrosswordViewModel : ViewModel() {
     fun selectCell(row: Int, col: Int) {
         val puzzle = _uiState.value.puzzle ?: return
 
-        // Faqat juft indexdagi kataklar tanlanishi mumkin
         if (row % 2 == 1 || col % 2 == 1) return
 
         if (row < 0 || row >= puzzle.rows) return
@@ -142,10 +140,10 @@ class CrosswordViewModel : ViewModel() {
 
         while (attempts < maxAttempts) {
             if (isHorizontal) {
-                nextCol += 2 // Har 2 qadam (devorni o'tkazib yuborish)
+                nextCol += 2
                 if (nextCol >= puzzle.cols) return
             } else {
-                nextRow += 2 // Har 2 qadam
+                nextRow += 2
                 if (nextRow >= puzzle.rows) return
             }
 
@@ -169,10 +167,8 @@ class CrosswordViewModel : ViewModel() {
             if (word.isHorizontal != isHorizontal) return@find false
 
             if (isHorizontal) {
-                // Gorizontal: bir xil qatorda, 2 qadam oraliqda
                 row == word.startRow && col >= word.startCol && col < word.startCol + (word.word.length * 2) && (col - word.startCol) % 2 == 0
             } else {
-                // Vertikal: bir xil ustunda, 2 qadam oraliqda
                 col == word.startCol && row >= word.startRow && row < word.startRow + (word.word.length * 2) && (row - word.startRow) % 2 == 0
             }
         }
@@ -180,7 +176,6 @@ class CrosswordViewModel : ViewModel() {
 
     fun revealWord(word: CrosswordWord) {
         word.word.forEachIndexed { index, char ->
-            // Har 2 qadamda harf joylashgan
             val row = if (word.isHorizontal) word.startRow else word.startRow + (index * 2)
             val col = if (word.isHorizontal) word.startCol + (index * 2) else word.startCol
 
