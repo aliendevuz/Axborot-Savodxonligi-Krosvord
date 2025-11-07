@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import uz.alien.crossword.Crossword
 
 data class CrosswordUiState(
     val puzzle: CrosswordPuzzle? = null,
@@ -20,26 +21,29 @@ data class CrosswordUiState(
     val isCompleted: Boolean = false,
     val correctCells: Int = 0,
     val totalCells: Int = 0,
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val error: String? = null
 )
 
 class CrosswordViewModel : ViewModel() {
 
+    private var src = ""
     private val _uiState = MutableStateFlow(CrosswordUiState(isLoading = true))
     val uiState: StateFlow<CrosswordUiState> = _uiState.asStateFlow()
 
     private val _cellStates: SnapshotStateMap<Pair<Int, Int>, CellState> = mutableStateMapOf()
     val cellStates: Map<Pair<Int, Int>, CellState> = _cellStates
 
-    fun initializePuzzle(consoleOutput: String) {
+    fun generatePuzzle(src: String) {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
-                _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-
+                val consoleOutput = withContext(Dispatchers.IO) {
+                    Crossword.generateCrossword(13, 25, src)
+                }
                 val puzzle = withContext(Dispatchers.IO) {
-                    val parsedPuzzle = CrosswordParser.parseConsoleOutput(consoleOutput)
-                    parsedPuzzle?.let { CrosswordParser.fillWordsFromGrid(it) }
+                    val parsed = CrosswordParser.parseConsoleOutput(consoleOutput)
+                    parsed?.let { CrosswordParser.fillWordsFromGrid(it) }
                 }
 
                 if (puzzle == null) {
@@ -50,18 +54,37 @@ class CrosswordViewModel : ViewModel() {
                     return@launch
                 }
 
+                // Hamma hujayra holatini tozalash
+                _cellStates.clear()
+
                 _uiState.value = _uiState.value.copy(
                     puzzle = puzzle,
+                    selectedCell = null,
+                    selectedWord = null,
+                    isHorizontalMode = true,
+                    showHints = true,
+                    isCompleted = false,
+                    correctCells = 0,
                     totalCells = countNonWallCells(puzzle),
                     isLoading = false
                 )
             } catch (e: Exception) {
-                e.printStackTrace()
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     error = "Xatolik: ${e.message}"
                 )
             }
+        }
+    }
+
+    fun regeneratePuzzle() {
+        generatePuzzle(src)
+    }
+
+    fun initializeIfNeeded(src: String) {
+        this.src = src
+        if (_uiState.value.puzzle == null && _uiState.value.isLoading) {
+            generatePuzzle(src)
         }
     }
 

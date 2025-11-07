@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Backspace
@@ -51,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +71,8 @@ fun HintItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .shadow(if (isSelected) 8.dp else 2.dp, RoundedCornerShape(16.dp))
             .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected)
@@ -76,14 +80,12 @@ fun HintItem(
             else
                 MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 4.dp else 1.dp
-        )
+        shape = RoundedCornerShape(16.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -92,25 +94,31 @@ fun HintItem(
             ) {
                 Text(
                     text = "${word.number}. ${word.hint}",
-                    fontSize = 14.sp,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                    fontSize = 15.sp,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
+                Spacer(Modifier.height(6.dp))
                 Text(
                     text = "${word.word.length} harf",
-                    fontSize = 12.sp,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(top = 4.dp)
+                    fontSize = 13.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium
                 )
             }
 
             IconButton(
                 onClick = onReveal,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
             ) {
                 Icon(
                     imageVector = Icons.Default.Lightbulb,
                     contentDescription = "Javobni ko'rsatish",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
@@ -133,15 +141,15 @@ fun VirtualKeyboard(
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
-    val horizontalPadding = 8.dp
-    val rowSpacing = 4.dp
+    val horizontalPadding = 12.dp
+    val rowSpacing = 6.dp
     val availableWidth = screenWidth - horizontalPadding * 2
 
     val firstRowButtonCount = latinKeys[0].size
     val firstRowTotalSpacing = rowSpacing * (firstRowButtonCount - 1)
     val firstRowButtonWidth = (availableWidth - firstRowTotalSpacing) / firstRowButtonCount
 
-    val keyboardContentHeight = 172.dp
+    val keyboardContentHeight = 180.dp
     val animatedContentHeight by animateDpAsState(
         targetValue = if (isVisible) keyboardContentHeight else 0.dp,
         animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
@@ -151,7 +159,8 @@ fun VirtualKeyboard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = horizontalPadding, vertical = 8.dp),
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(horizontal = horizontalPadding, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(rowSpacing)
     ) {
         if (animatedContentHeight > 0.dp) {
@@ -182,16 +191,18 @@ fun VirtualKeyboard(
                                         onClick = onDelete,
                                         modifier = Modifier
                                             .width(buttonWidth)
-                                            .height(48.dp),
+                                            .height(52.dp)
+                                            .shadow(4.dp, RoundedCornerShape(12.dp)),
                                         contentPadding = PaddingValues(4.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = MaterialTheme.colorScheme.error
-                                        )
+                                        ),
+                                        shape = RoundedCornerShape(12.dp)
                                     ) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Filled.Backspace,
                                             contentDescription = "O'chirish",
-                                            modifier = Modifier.size(20.dp)
+                                            modifier = Modifier.size(22.dp)
                                         )
                                     }
                                 }
@@ -200,7 +211,7 @@ fun VirtualKeyboard(
                                         onClick = { },
                                         modifier = Modifier
                                             .width(buttonWidth)
-                                            .height(48.dp)
+                                            .height(52.dp)
                                             .alpha(0f),
                                         contentPadding = PaddingValues(4.dp)
                                     ) {}
@@ -219,7 +230,7 @@ fun VirtualKeyboard(
             }
         }
 
-        val toggleText = if (isVisible) "Yashirish" else "Ko‘rsatish"
+        val toggleText = if (isVisible) "Yashirish" else "Ko'rsatish"
         val toggleIcon = if (isVisible) Icons.Default.KeyboardHide else Icons.Default.Keyboard
 
         Row(
@@ -230,17 +241,23 @@ fun VirtualKeyboard(
                 onClick = onToggleVisibility,
                 modifier = Modifier
                     .padding(horizontal = 4.dp)
-                    .height(48.dp),
+                    .height(52.dp)
+                    .shadow(4.dp, RoundedCornerShape(12.dp)),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary
-                )
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                ),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(
                     imageVector = toggleIcon,
-                    contentDescription = toggleText
+                    contentDescription = toggleText,
+                    modifier = Modifier.size(20.dp)
                 )
-                Spacer(Modifier.width(4.dp))
-                Text(toggleText)
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = toggleText,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
@@ -256,15 +273,17 @@ fun KeyboardButton(
         onClick = onClick,
         modifier = Modifier
             .width(width)
-            .height(48.dp),
+            .height(52.dp)
+            .shadow(4.dp, RoundedCornerShape(12.dp)),
         contentPadding = PaddingValues(4.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary
-        )
+        ),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Text(
             text = text,
-            fontSize = 16.sp,
+            fontSize = 17.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -285,16 +304,19 @@ fun ControlPanel(
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .shadow(6.dp, RoundedCornerShape(20.dp)),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        ),
+        shape = RoundedCornerShape(20.dp)
     ) {
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -303,12 +325,14 @@ fun ControlPanel(
             ) {
                 Text(
                     text = "Jarayon:",
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
                     text = "$correctCells / $totalCells",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -317,9 +341,10 @@ fun ControlPanel(
                 progress = { if (totalCells > 0) correctCells.toFloat() / totalCells else 0f },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp),
+                    .height(10.dp)
+                    .clip(RoundedCornerShape(5.dp)),
                 color = MaterialTheme.colorScheme.primary,
-                trackColor = ProgressIndicatorDefaults.linearTrackColor,
+                trackColor = MaterialTheme.colorScheme.surface,
                 strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
             )
         }
