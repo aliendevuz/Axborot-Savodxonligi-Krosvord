@@ -66,9 +66,7 @@ class CrosswordViewModel : ViewModel() {
     }
 
     private fun countNonWallCells(puzzle: CrosswordPuzzle): Int {
-        return puzzle.grid.sumOf { row ->
-            row.count { !it.isWall && it.char != ' ' && it.row % 2 == 0 && it.col % 2 == 0 }
-        }
+        return puzzle.words.size
     }
 
     fun selectCell(row: Int, col: Int) {
@@ -191,8 +189,20 @@ class CrosswordViewModel : ViewModel() {
     }
 
     private fun updateCorrectCount() {
-        val correct = _cellStates.values.count { it.isCorrect == true }
-        _uiState.value = _uiState.value.copy(correctCells = correct)
+        val puzzle = _uiState.value.puzzle ?: return
+        val completedWords = puzzle.words.count { word ->
+            isWordComplete(word)
+        }
+        _uiState.value = _uiState.value.copy(correctCells = completedWords)
+    }
+
+    private fun isWordComplete(word: CrosswordWord): Boolean {
+        return word.word.indices.all { index ->
+            val row = if (word.isHorizontal) word.startRow else word.startRow + (index * 2)
+            val col = if (word.isHorizontal) word.startCol + (index * 2) else word.startCol
+            val cellState = _cellStates[Pair(row, col)]
+            cellState?.isCorrect == true
+        }
     }
 
     private fun checkCompletion() {
@@ -218,5 +228,29 @@ class CrosswordViewModel : ViewModel() {
             isCompleted = false,
             correctCells = 0
         )
+    }
+
+    fun revealRandomLetter(word: CrosswordWord) {
+        val unrevealedIndices = word.word.indices.filter { index ->
+            val row = if (word.isHorizontal) word.startRow else word.startRow + (index * 2)
+            val col = if (word.isHorizontal) word.startCol + (index * 2) else word.startCol
+            val cellState = _cellStates[Pair(row, col)]
+            cellState?.isCorrect != true
+        }
+
+        if (unrevealedIndices.isNotEmpty()) {
+            val randomIndex = unrevealedIndices.random()
+            val row = if (word.isHorizontal) word.startRow else word.startRow + (randomIndex * 2)
+            val col = if (word.isHorizontal) word.startCol + (randomIndex * 2) else word.startCol
+            
+            _cellStates[Pair(row, col)] = CellState(
+                userInput = word.word[randomIndex],
+                isRevealed = true,
+                isCorrect = true
+            )
+        }
+
+        updateCorrectCount()
+        checkCompletion()
     }
 }
