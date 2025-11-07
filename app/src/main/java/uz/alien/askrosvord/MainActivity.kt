@@ -29,51 +29,15 @@ import uz.alien.crossword.Crossword
 
 class MainActivity : ComponentActivity() {
 
-    var src = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setClearEdge()
 
-        src = assets.open("src.txt").reader().readText()
+        val src = assets.open("src.txt").reader().readText()
 
         setContent {
             AxborotSavodxonligiKrosvordTheme {
-                var puzzleOutput by remember { mutableStateOf<String?>(null) }
-
-                LaunchedEffect(Unit) {
-                    puzzleOutput = withContext(Dispatchers.IO) {
-                        try {
-                            val result = Crossword.generateCrossword(13, 25, src)
-                            Log.d("CrosswordGen", "Generated successfully")
-                            Log.d("CrosswordGen", result)
-                            result
-                        } catch (e: Exception) {
-                            Log.e("CrosswordGen", "Error: ${e.message}", e)
-                            null
-                        }
-                    }
-                }
-
-                when {
-                    puzzleOutput != null -> {
-                        CrosswordApp(consoleOutput = puzzleOutput!!)
-                    }
-                    else -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
-                            ) {
-                                CircularProgressIndicator()
-                                Text("Krossvord tayyorlanmoqda...")
-                            }
-                        }
-                    }
-                }
+                CrosswordScreen(src)
             }
         }
     }

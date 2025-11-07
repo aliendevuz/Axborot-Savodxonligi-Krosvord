@@ -60,61 +60,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun HintsPanel(
-    words: List<CrosswordWord>,
-    selectedWord: CrosswordWord?,
-    showHints: Boolean,
-    onWordClick: (CrosswordWord) -> Unit,
-    onRevealWord: (CrosswordWord) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    if (!showHints) return
-
-    var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Gorizontal", "Vertikal")
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
-    ) {
-        TabRow(
-            selectedTabIndex = selectedTab,
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTab == index,
-                    onClick = { selectedTab = index },
-                    text = { Text(title) }
-                )
-            }
-        }
-
-        val filteredWords = words.filter {
-            it.isHorizontal == (selectedTab == 0)
-        }.sortedBy { it.number }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = 300.dp)
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(filteredWords) { word ->
-                HintItem(
-                    word = word,
-                    isSelected = selectedWord == word,
-                    onClick = { onWordClick(word) },
-                    onReveal = { onRevealWord(word) }
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun HintItem(
     word: CrosswordWord,
     isSelected: Boolean,
@@ -377,57 +322,6 @@ fun ControlPanel(
                 trackColor = ProgressIndicatorDefaults.linearTrackColor,
                 strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
             )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Button(
-                    onClick = onToggleDirection,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = if (isHorizontalMode)
-                            Icons.AutoMirrored.Filled.ArrowForward
-                        else
-                            Icons.Default.ArrowDownward,
-                        contentDescription = null
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text(if (isHorizontalMode) "Gorizontal" else "Vertikal")
-                }
-
-//                IconButton(
-//                    onClick = onToggleHints,
-//                    modifier = Modifier
-//                        .background(
-//                            if (showHints) MaterialTheme.colorScheme.primary
-//                            else MaterialTheme.colorScheme.surface,
-//                            shape = MaterialTheme.shapes.small
-//                        )
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.AutoMirrored.Filled.Help,
-//                        contentDescription = "Maslahatlar",
-//                        tint = if (showHints) Color.White else Color.Gray
-//                    )
-//                }
-
-                IconButton(
-                    onClick = onReset,
-                    modifier = Modifier
-                        .background(
-                            MaterialTheme.colorScheme.errorContainer,
-                            shape = MaterialTheme.shapes.small
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Qaytadan boshlash",
-                        tint = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                }
-            }
         }
     }
 }

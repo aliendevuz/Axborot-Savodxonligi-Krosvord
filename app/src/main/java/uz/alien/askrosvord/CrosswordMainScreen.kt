@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,17 +38,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import uz.alien.crossword.Crossword
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CrosswordScreen(
-    consoleOutput: String,
+    src: String,
     viewModel: CrosswordViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val cellStates = viewModel.cellStates
 
+    val consoleOutput = Crossword.generateCrossword(13, 25, src)
     LaunchedEffect(consoleOutput) {
+
         viewModel.initializePuzzle(consoleOutput)
     }
 
@@ -139,17 +143,37 @@ fun CrosswordScreen(
                             }
 
                             if (uiState.showHints) {
-                                HintsPanel(
-                                    words = puzzle.words,
-                                    selectedWord = uiState.selectedWord,
-                                    showHints = true,
-                                    onWordClick = { word ->
-                                        viewModel.selectCell(word.startRow, word.startCol)
-                                    },
-                                    onRevealWord = { word ->
-                                        viewModel.revealWord(word)
+                                Column {
+                                    uiState.selectedWord?.let {
+                                        HintItem(
+                                            word = it,
+                                            isSelected = true,
+                                            onClick = {
+                                                viewModel.selectCell(it.startRow, it.startCol)
+                                            },
+                                            onReveal = {
+                                                viewModel.revealWord(it)
+                                            }
+                                        )
                                     }
-                                )
+                                    Row {
+                                        Button(onClick = {
+                                            viewModel.resetPuzzle()
+                                        }) {
+                                            Text("Reset")
+                                        }
+                                        Button(onClick = {
+                                            viewModel.toggleDirection()
+                                        }) {
+                                            Text("Horizontal")
+                                        }
+                                        Button(onClick = {
+                                            viewModel.resetPuzzle()
+                                        }) {
+                                            Text("Restart")
+                                        }
+                                    }
+                                }
                             }
                         }
 
@@ -201,16 +225,4 @@ fun CompletionDialog(
             }
         }
     )
-}
-
-@Composable
-fun CrosswordApp(consoleOutput: String) {
-    MaterialTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            CrosswordScreen(consoleOutput = consoleOutput)
-        }
-    }
 }

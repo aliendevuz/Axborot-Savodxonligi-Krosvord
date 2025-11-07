@@ -125,15 +125,14 @@ object CrosswordParser {
                     val leftPart = parts[0].trim()
                     val coordPart = parts[1].trim()
 
-                    val numberMatch = Regex("^(\\d+)\\.\\s*(.*)\\s*\\((\\d+)\\)").find(leftPart)
-                    if (numberMatch == null) continue
+                    val numberMatch =
+                        Regex("^(\\d+)\\.\\s*(.*)\\s*\\((\\d+)\\)").find(leftPart) ?: continue
 
                     val number = numberMatch.groupValues[1].toIntOrNull() ?: continue
                     val hint = numberMatch.groupValues[2].trim()
                     val length = numberMatch.groupValues[3].toIntOrNull() ?: continue
 
-                    val coordMatch = Regex("\\[(\\d+),(\\d+)]").find(coordPart)
-                    if (coordMatch == null) continue
+                    val coordMatch = Regex("\\[(\\d+),(\\d+)]").find(coordPart) ?: continue
 
                     val row = coordMatch.groupValues[1].toIntOrNull() ?: continue
                     val col = coordMatch.groupValues[2].toIntOrNull() ?: continue
