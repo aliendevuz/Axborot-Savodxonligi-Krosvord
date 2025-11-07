@@ -1,8 +1,10 @@
 package uz.alien.askrosvord
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,7 +61,6 @@ fun CrosswordScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
         ) {
             when {
                 uiState.isLoading -> {
@@ -116,7 +117,8 @@ fun CrosswordScreen(
                                 totalCells = uiState.totalCells,
                                 onToggleDirection = { viewModel.toggleDirection() },
                                 onToggleHints = { viewModel.toggleHints() },
-                                onReset = { viewModel.resetPuzzle() }
+                                onReset = { viewModel.resetPuzzle() },
+                                modifier = Modifier.padding(top = paddingValues.calculateTopPadding())
                             )
 
                             Box(
@@ -161,7 +163,10 @@ fun CrosswordScreen(
                                 viewModel.deleteChar()
                             },
                             onToggleVisibility = { isKeyboardVisible = !isKeyboardVisible },
-                            isVisible = isKeyboardVisible
+                            isVisible = isKeyboardVisible,
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .padding(bottom = paddingValues.calculateBottomPadding())
                         )
                     }
                 }

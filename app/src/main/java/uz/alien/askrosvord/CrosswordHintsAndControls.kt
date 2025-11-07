@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.Backspace
@@ -49,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
@@ -204,7 +206,6 @@ fun VirtualKeyboard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(horizontal = horizontalPadding, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(rowSpacing)
     ) {
@@ -338,15 +339,14 @@ fun ControlPanel(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+        modifier = Modifier
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -378,8 +378,6 @@ fun ControlPanel(
                 strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
             )
 
-            HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -399,21 +397,21 @@ fun ControlPanel(
                     Text(if (isHorizontalMode) "Gorizontal" else "Vertikal")
                 }
 
-                IconButton(
-                    onClick = onToggleHints,
-                    modifier = Modifier
-                        .background(
-                            if (showHints) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.surface,
-                            shape = MaterialTheme.shapes.small
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Help,
-                        contentDescription = "Maslahatlar",
-                        tint = if (showHints) Color.White else Color.Gray
-                    )
-                }
+//                IconButton(
+//                    onClick = onToggleHints,
+//                    modifier = Modifier
+//                        .background(
+//                            if (showHints) MaterialTheme.colorScheme.primary
+//                            else MaterialTheme.colorScheme.surface,
+//                            shape = MaterialTheme.shapes.small
+//                        )
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.AutoMirrored.Filled.Help,
+//                        contentDescription = "Maslahatlar",
+//                        tint = if (showHints) Color.White else Color.Gray
+//                    )
+//                }
 
                 IconButton(
                     onClick = onReset,

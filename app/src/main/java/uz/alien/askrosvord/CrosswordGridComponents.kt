@@ -12,14 +12,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -61,14 +67,14 @@ fun CrosswordGrid(
                                 modifier = Modifier
                                     .width(wallThickness)
                                     .height(wallThickness)
-                                    .background(if (cell.char == '|') Color.Black else Color.White)
+                                    .background(if (cell.char == '|') Color(0x80909AAB) else Color(0x00FFFFFF))
                             )
                         } else {
                             Box(
                                 modifier = Modifier
                                     .width(cellSize)
                                     .height(wallThickness)
-                                    .background(if (cell.char == '|') Color.Black else Color.White)
+                                    .background(if (cell.char == '|') Color(0x80909AAB) else Color(0x00FFFFFF))
                             )
                         }
                     }
@@ -86,7 +92,7 @@ fun CrosswordGrid(
                                 modifier = Modifier
                                     .width(wallThickness)
                                     .height(cellSize)
-                                    .background(if (cell.char == '|') Color.Black else Color.White)
+                                    .background(if (cell.char == '|') Color(0x80909AAB) else Color(0x00FFFFFF))
                             )
                         } else {
                             CrosswordCell(
@@ -111,24 +117,31 @@ fun CrosswordCell(
     cellState: CellState?,
     isSelected: Boolean,
     isInSelectedWord: Boolean,
-    cellSize: androidx.compose.ui.unit.Dp,
+    cellSize: Dp,
     onClick: () -> Unit
 ) {
-    val backgroundColor = when {
-        cell.isWall -> Color.Black
-        isSelected -> Color(0xFF4CAF50)
-        isInSelectedWord -> Color(0xFFE8F5E9)
-        cellState?.isRevealed == true -> Color(0xFFFFEB3B)
-        cellState?.isCorrect == true -> Color(0xFFC8E6C9)
-        cellState?.isCorrect == false -> Color(0xFFFFCDD2)
-        else -> Color.White
+    val backgroundBrush = when {
+        cell.isWall -> Brush.linearGradient(
+            colors = listOf(
+                Color(0xFF334155),
+                Color(0xFF1E293B)
+            ),
+            start = Offset.Zero,
+            end = Offset.Infinite
+        )
+        isSelected -> SolidColor(Color(0xFF4CAF50))
+        isInSelectedWord -> SolidColor(Color(0xFFE8F5E9))
+        cellState?.isRevealed == true -> SolidColor(Color(0xFFFFEB3B))
+        cellState?.isCorrect == true -> SolidColor(Color(0xFFC8E6C9))
+        cellState?.isCorrect == false -> SolidColor(Color(0xFFFFCDD2))
+        else -> SolidColor(Color(0x00FFFFFF))
     }
 
     Box(
         modifier = Modifier
             .size(cellSize)
-            .background(backgroundColor)
-            .border(0.5.dp, Color.Gray)
+            .background(brush = backgroundBrush)
+            .border(0.5.dp, Color(0x80BAC3D3))
             .clickable(enabled = !cell.isWall) { onClick() },
         contentAlignment = Alignment.Center
     ) {
