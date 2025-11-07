@@ -67,14 +67,14 @@ fun CrosswordGrid(
                                 modifier = Modifier
                                     .width(wallThickness)
                                     .height(wallThickness)
-                                    .background(if (cell.char == '|') Color(0x80909AAB) else Color(0x00FFFFFF))
+                                    .background(if (cell.char == '|') Color(0xB8727A86) else Color(0x00FFFFFF))
                             )
                         } else {
                             Box(
                                 modifier = Modifier
                                     .width(cellSize)
                                     .height(wallThickness)
-                                    .background(if (cell.char == '|') Color(0x80909AAB) else Color(0x00FFFFFF))
+                                    .background(if (cell.char == '|') Color(0xB8727A86) else Color(0x00FFFFFF))
                             )
                         }
                     }
@@ -92,7 +92,7 @@ fun CrosswordGrid(
                                 modifier = Modifier
                                     .width(wallThickness)
                                     .height(cellSize)
-                                    .background(if (cell.char == '|') Color(0x80909AAB) else Color(0x00FFFFFF))
+                                    .background(if (cell.char == '|') Color(0xB8727A86) else Color(0x00FFFFFF))
                             )
                         } else {
                             CrosswordCell(
@@ -141,7 +141,7 @@ fun CrosswordCell(
         modifier = Modifier
             .size(cellSize)
             .background(brush = backgroundBrush)
-            .border(0.5.dp, Color(0x80BAC3D3))
+            .border(0.5.dp, Color(0xB8727A86))
             .clickable(enabled = !cell.isWall) { onClick() },
         contentAlignment = Alignment.Center
     ) {
@@ -173,7 +173,7 @@ private fun isInWord(row: Int, col: Int, word: CrosswordWord?): Boolean {
 @Composable
 fun WordNumberIndicator(
     puzzle: CrosswordPuzzle,
-    cellSize: androidx.compose.ui.unit.Dp
+    cellSize: Dp
 ) {
     Column(
         modifier = Modifier
